@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Juju's House — Finanças</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --c1:#38BDF8;--c2:#A78BFA;--c3:#F472B6;
+  --c1a:rgba(56,189,248,0.15);--c2a:rgba(167,139,250,0.15);--c3a:rgba(244,114,182,0.15);
+  --c1b:rgba(56,189,248,0.28);--c2b:rgba(167,139,250,0.28);--c3b:rgba(244,114,182,0.28);
+  --b1:rgba(56,189,248,0.22);--b2:rgba(167,139,250,0.22);--b3:rgba(244,114,182,0.22);
+  --bg:#0F1120;--bg2:#131628;--bg3:#171B30;
+  --card:#181C30;--card2:#1B1F34;
+  --text:#C8D8F0;--text2:#7A90B8;--text3:#3A5070;
+  --green:#34D399;--red:#F87171;--gold:#FBBF24;
+}
+@keyframes glow1{0%,100%{box-shadow:0 0 8px rgba(56,189,248,0.4),0 0 20px rgba(56,189,248,0.15)}50%{box-shadow:0 0 16px rgba(56,189,248,0.7),0 0 40px rgba(56,189,248,0.25)}}
+@keyframes glow2{0%,100%{box-shadow:0 0 8px rgba(167,139,250,0.4)}50%{box-shadow:0 0 16px rgba(167,139,250,0.7)}}
+@keyframes glow3{0%,100%{box-shadow:0 0 8px rgba(244,114,182,0.4)}50%{box-shadow:0 0 16px rgba(244,114,182,0.7)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes scan{0%{top:-5%}100%{top:105%}}
+@keyframes pulse{0%,100%{opacity:.7}50%{opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes borderGlow{0%,100%{border-color:var(--b1)}50%{border-color:rgba(56,189,248,0.6)}}
+@keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes particleFloat{0%{transform:translateY(0) translateX(0);opacity:0}10%{opacity:1}90%{opacity:.5}100%{transform:translateY(-80px) translateX(20px);opacity:0}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes rowIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+
+body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* PARTICLES */
+.particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.particle{position:absolute;width:2px;height:2px;border-radius:50%;animation:particleFloat linear infinite}
+
+/* GRID */
+.grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(56,189,248,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,0.03) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0}
+
+/* SCAN LINE */
+.scan-line{position:fixed;left:0;right:0;height:150px;background:linear-gradient(transparent,rgba(56,189,248,0.035),transparent);pointer-events:none;z-index:1;animation:scan 10s linear infinite}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,rgba(56,189,248,0.08),rgba(167,139,250,0.08));border-bottom:1px solid var(--b1);padding:14px 22px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:100;backdrop-filter:blur(10px)}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--c1),var(--c2),var(--c3),transparent);animation:shimmer 3s linear infinite;background-size:200% 100%}
+.logo-box{width:40px;height:40px;border:1px solid var(--c1);border-radius:10px;display:flex;align-items:center;justify-content:center;animation:glow1 3s ease-in-out infinite;position:relative}
+.logo-box::before{content:'';position:absolute;inset:-3px;border:1px solid rgba(56,189,248,0.15);border-radius:12px;animation:pulse 2s ease-in-out infinite}
+.logo-name{font-size:17px;font-weight:700;color:#fff;letter-spacing:3px;text-shadow:0 0 20px rgba(56,189,248,0.5)}
+.logo-sub{font-size:10px;color:var(--c2);letter-spacing:2px;font-family:'Share Tech Mono',monospace}
+.save-chip{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--c1);border:1px solid var(--b1);border-radius:4px;padding:5px 12px;background:var(--c1a);font-family:'Share Tech Mono',monospace;letter-spacing:1px}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+.sdot.saving{background:var(--gold);animation:blink .4s infinite}
+.btn-reset{background:var(--c3a);border:1px solid var(--b3);color:var(--c3);border-radius:5px;padding:5px 11px;font-size:11px;cursor:pointer;font-family:'Share Tech Mono',monospace;letter-spacing:1px;transition:all .2s}
+.btn-reset:hover{background:var(--c3b);animation:glow3 1s ease-in-out infinite}
+
+/* MONTH TABS */
+.month-bar{background:var(--bg2);border-bottom:1px solid var(--b2);overflow-x:auto;white-space:nowrap;padding:0 16px;position:relative;z-index:50;-webkit-overflow-scrolling:touch}
+.month-tabs{display:inline-flex}
+.mtab{padding:10px 13px;font-size:11px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;letter-spacing:1px;transition:all .2s;display:inline-flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;position:relative}
+.mtab.active{color:var(--c2);border-bottom-color:var(--c2);text-shadow:0 0 10px rgba(167,139,250,0.6)}
+.mtab:hover:not(.active){color:var(--text2);background:var(--c2a)}
+.mtab .dot{width:5px;height:5px;border-radius:50%;background:var(--c2);animation:pulse 2s infinite}
+.mtab .clone-btn{display:none;font-size:9px;background:var(--c1a);border:1px solid var(--b1);color:var(--c1);border-radius:3px;padding:1px 5px;margin-left:3px;cursor:pointer;font-family:'Share Tech Mono',monospace}
+.mtab:hover .clone-btn,.mtab.active .clone-btn{display:inline-flex;align-items:center;gap:2px}
+.clone-btn:hover{background:var(--c1b)}
+
+/* INFO BAR */
+.info-bar{background:rgba(56,189,248,0.04);border-bottom:1px solid rgba(56,189,248,0.08);padding:5px 16px;font-size:10px;color:var(--text2);display:flex;justify-content:space-between;position:relative;z-index:50;font-family:'Share Tech Mono',monospace;letter-spacing:.5px}
+
+/* NAV */
+.nav{background:var(--bg2);border-bottom:1px solid rgba(255,255,255,0.05);display:flex;padding:0 16px;overflow-x:auto;position:relative;z-index:50;-webkit-overflow-scrolling:touch}
+.ntab{padding:10px 14px;font-size:12px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:5px;transition:all .2s;font-weight:600;letter-spacing:.5px}
+.ntab.active{color:var(--c1);border-bottom-color:var(--c1);text-shadow:0 0 10px rgba(56,189,248,0.5)}
+.ntab.red.active{color:var(--c3);border-bottom-color:var(--c3)}
+.ntab:hover:not(.active){color:var(--text2);background:rgba(255,255,255,0.03)}
+
+/* CONTENT */
+.content{padding:18px 20px;display:none;position:relative;z-index:10;animation:fadeIn .25s ease}
+.content.active{display:block}
+
+/* SECTION TITLE */
+.sec-title{font-size:10px;font-weight:700;color:var(--c2);letter-spacing:2px;margin-bottom:14px;display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace}
+.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--b2),transparent)}
+
+/* CARDS */
+.cards-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:10px;margin-bottom:18px}
+.cy-card{background:var(--card);border-radius:8px;padding:15px;border:1px solid rgba(255,255,255,0.06);position:relative;overflow:hidden;transition:all .3s;animation:slideIn .3s ease}
+.cy-card:hover{transform:translateY(-2px);border-color:var(--b1)}
+.cy-card:hover .card-ico{animation:float 1.5s ease-in-out infinite}
+.cy-card .top-line{position:absolute;top:0;left:0;right:0;height:2px}
+.l1{background:linear-gradient(90deg,var(--c1),transparent)}
+.l2{background:linear-gradient(90deg,var(--c2),transparent)}
+.l3{background:linear-gradient(90deg,var(--c3),transparent)}
+.lg{background:linear-gradient(90deg,var(--green),transparent)}
+.cy-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(56,189,248,0.03),transparent);pointer-events:none}
+.card-lbl{font-size:9px;color:var(--text3);letter-spacing:1.5px;margin-bottom:6px;font-family:'Share Tech Mono',monospace}
+.card-val{font-size:19px;font-weight:700;line-height:1}
+.cv1{color:var(--c1);text-shadow:0 0 15px rgba(56,189,248,0.4)}
+.cv2{color:var(--c2);text-shadow:0 0 15px rgba(167,139,250,0.4)}
+.cv3{color:var(--c3);text-shadow:0 0 15px rgba(244,114,182,0.4)}
+.cvg{color:var(--green);text-shadow:0 0 15px rgba(52,211,153,0.4)}
+.cvr{color:var(--red)}
+.card-sub{font-size:9px;color:var(--text3);margin-top:3px}
+.card-ico{position:absolute;right:12px;top:12px;font-size:18px;opacity:.18;color:#fff;transition:all .3s}
+
+/* PANELS */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.three-col{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
+.panel{background:var(--card);border-radius:8px;padding:16px;border:1px solid rgba(255,255,255,0.06);position:relative;overflow:hidden;transition:border-color .3s}
+.panel:hover{border-color:var(--b2)}
+.panel::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,var(--b2),transparent)}
+.panel-title{font-size:11px;font-weight:700;color:var(--c1);letter-spacing:1.5px;margin-bottom:12px;display:flex;align-items:center;gap:7px;font-family:'Share Tech Mono',monospace}
+.pt2{color:var(--c2)} .pt3{color:var(--c3)}
+
+/* TABLES */
+table.dt{width:100%;border-collapse:collapse;font-size:12px}
+table.dt th{background:rgba(56,189,248,0.05);color:var(--text3);font-weight:600;text-align:left;padding:8px 10px;border-bottom:1px solid rgba(56,189,248,0.1);font-size:9px;letter-spacing:1.5px;font-family:'Share Tech Mono',monospace}
+table.dt td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--text);vertical-align:middle;transition:background .15s}
+table.dt tr:last-child td{border-bottom:none}
+table.dt tr{animation:rowIn .2s ease}
+table.dt tr:hover td{background:rgba(56,189,248,0.04)}
+
+/* BADGES */
+.badge{display:inline-flex;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.5px}
+.bd1{background:var(--c1a);color:var(--c1);border:1px solid var(--b1)}
+.bd2{background:var(--c2a);color:var(--c2);border:1px solid var(--b2)}
+.bd3{background:var(--c3a);color:var(--c3);border:1px solid var(--b3)}
+.bdg{background:rgba(52,211,153,0.12);color:var(--green);border:1px solid rgba(52,211,153,0.25)}
+.bdr{background:rgba(248,113,113,0.12);color:var(--red);border:1px solid rgba(248,113,113,0.25)}
+.bdw{background:rgba(255,255,255,0.06);color:var(--text2);border:1px solid rgba(255,255,255,0.1)}
+.bdo{background:rgba(251,191,36,0.12);color:var(--gold);border:1px solid rgba(251,191,36,0.25)}
+
+/* INPUTS */
+select,input[type=text],input[type=number],input[type=date]{font-size:12px;padding:7px 9px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);color:var(--text);background:rgba(255,255,255,0.05);width:100%;font-family:'Rajdhani',sans-serif;font-weight:500;transition:all .2s}
+select:focus,input:focus{outline:none;border-color:var(--c1);background:rgba(56,189,248,0.06);box-shadow:0 0 12px rgba(56,189,248,0.15)}
+select option{background:var(--bg3);color:var(--text)}
+
+/* BUTTONS */
+.btn{padding:7px 14px;border-radius:6px;border:none;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .2s;font-family:'Rajdhani',sans-serif;letter-spacing:.5px}
+.btn-p{background:linear-gradient(135deg,var(--c1a),var(--c2a));color:var(--c1);border:1px solid var(--b1)}
+.btn-p:hover{background:linear-gradient(135deg,var(--c1b),var(--c2b));box-shadow:0 0 15px rgba(56,189,248,0.2);transform:translateY(-1px)}
+.btn-d{background:var(--c3a);color:var(--c3);border:1px solid var(--b3)}
+.btn-d:hover{background:var(--c3b)}
+.btn-ok{background:rgba(52,211,153,0.12);color:var(--green);border:1px solid rgba(52,211,153,0.3)}
+.btn-ok:hover{background:rgba(52,211,153,0.22)}
+.btn-sm{padding:4px 10px;font-size:11px}
+
+/* FORMS */
+.add-form{background:rgba(56,189,248,0.04);border-radius:8px;padding:14px;margin-bottom:16px;border:1px solid var(--b1);position:relative;overflow:hidden}
+.add-form::before{content:'';position:absolute;top:0;left:0;width:3px;bottom:0;background:linear-gradient(180deg,var(--c1),var(--c2))}
+.add-form-red{background:rgba(244,114,182,0.04);border-color:var(--b3)}
+.add-form-red::before{background:linear-gradient(180deg,var(--c3),var(--red))}
+.add-form-p2{background:rgba(167,139,250,0.04);border-color:var(--b2)}
+.add-form-p2::before{background:linear-gradient(180deg,var(--c2),var(--c3))}
+.form-title{font-size:10px;font-weight:700;color:var(--c1);letter-spacing:1.5px;margin-bottom:10px;display:flex;align-items:center;gap:6px;font-family:'Share Tech Mono',monospace}
+.ft2{color:var(--c2)} .ft3{color:var(--c3)}
+.form-grid{display:grid;gap:6px;margin-bottom:10px}
+
+/* TOTALS */
+.empty-state{text-align:center;padding:24px;color:var(--text3);font-size:11px;letter-spacing:1px;font-family:'Share Tech Mono',monospace}
+.total-row{display:flex;justify-content:space-between;padding:9px 12px;background:rgba(56,189,248,0.06);border-radius:6px;margin-top:8px;border:1px solid var(--b1)}
+.t2{background:rgba(167,139,250,0.06);border-color:var(--b2)}
+.t3{background:rgba(244,114,182,0.06);border-color:var(--b3)}
+.total-lbl{font-size:9px;color:var(--text3);letter-spacing:1px;font-family:'Share Tech Mono',monospace}
+.total-val{font-size:14px;font-weight:700}
+
+/* BARS */
+.lim-wrap{background:rgba(0,0,0,0.3);border-radius:4px;height:10px;margin:7px 0;overflow:hidden;border:1px solid rgba(255,255,255,0.06)}
+.lim1{height:100%;background:linear-gradient(90deg,var(--c1),var(--c2));transition:width .6s;position:relative}
+.lim1::after{content:'';position:absolute;right:0;top:0;bottom:0;width:2px;background:#fff;opacity:.5;animation:pulse 1s infinite}
+.lim2{height:100%;background:linear-gradient(90deg,var(--c2),var(--c3));transition:width .6s;position:relative}
+.lim2::after{content:'';position:absolute;right:0;top:0;bottom:0;width:2px;background:#fff;opacity:.5;animation:pulse 1s infinite}
+.prog-wrap{background:rgba(0,0,0,0.3);border-radius:4px;height:7px;margin:5px 0 2px;overflow:hidden;border:1px solid rgba(255,255,255,0.05)}
+.prog-fill{height:100%;transition:width .7s;position:relative}
+.prog-fill::after{content:'';position:absolute;right:0;top:0;bottom:0;width:2px;background:#fff;opacity:.4}
+
+/* GOALS */
+.goal-card{background:var(--card2);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:14px;margin-bottom:10px;transition:all .25s;animation:slideIn .3s ease}
+.goal-card:hover{border-color:var(--b2);transform:translateX(2px)}
+
+/* CHARTS */
+.chart-container{position:relative;width:100%;height:200px}
+.chart-sm{position:relative;width:100%;height:155px}
+.donut-wrap{position:relative;display:flex;justify-content:center}
+.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+.donut-center-val{font-size:15px;font-weight:700;color:var(--c1);font-family:'Rajdhani',sans-serif;text-shadow:0 0 12px rgba(56,189,248,0.5)}
+.donut-center-label{font-size:9px;color:var(--text3);letter-spacing:1px;font-family:'Share Tech Mono',monospace}
+.legend-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;font-size:11px;color:var(--text2)}
+.ldot{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:3px;vertical-align:middle}
+
+/* OVERDUE */
+.ov-alert{background:linear-gradient(135deg,rgba(244,114,182,0.12),rgba(248,113,113,0.08));border:1px solid var(--b3);border-radius:8px;padding:14px 20px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;animation:glow3 3s ease-in-out infinite}
+.ov-num{font-size:24px;font-weight:700;color:var(--c3);font-family:'Rajdhani',sans-serif;text-shadow:0 0 15px rgba(244,114,182,0.5)}
+.ov-lbl{font-size:9px;color:var(--text3);letter-spacing:1px;font-family:'Share Tech Mono',monospace}
+
+/* INCOME ROW */
+.income-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.income-row:last-child{border-bottom:none}
+
+/* EDIT */
+.edit-cell{cursor:pointer;border-radius:4px;padding:2px 4px;transition:background .15s}
+.edit-cell:hover{background:rgba(56,189,248,0.12)}
+
+/* CLONE MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:999;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex;animation:fadeIn .2s ease}
+.modal-box{background:var(--card2);border:1px solid var(--b2);border-radius:10px;padding:24px;width:340px;position:relative}
+.modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3))}
+.modal-title{font-size:14px;font-weight:700;color:var(--c2);letter-spacing:1px;margin-bottom:16px;font-family:'Share Tech Mono',monospace}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  .two-col,.three-col{grid-template-columns:1fr}
+  .cards-row{grid-template-columns:repeat(2,1fr)}
+  .header{padding:12px 14px}
+  .content{padding:14px}
+  .form-grid{grid-template-columns:1fr !important}
+  .ov-alert{flex-direction:column;gap:8px}
+}
+</style>
+</head>
+<body>
+
+<!-- PARTICLES -->
+<div class="particles" id="particles"></div>
+<div class="grid-bg"></div>
+<div class="scan-line"></div>
+
+<!-- CLONE MODAL -->
+<div class="modal-overlay" id="clone-modal">
+  <div class="modal-box">
+    <div class="modal-title"><i class="ti ti-copy"></i> duplicar mês</div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Copiar todos os dados de <strong id="clone-from-name" style="color:var(--c1)">—</strong> para qual mês?</p>
+    <select id="clone-target" style="margin-bottom:14px">
+      <option value="">selecione o mês destino...</option>
+    </select>
+    <div style="font-size:10px;color:var(--red);margin-bottom:14px;font-family:'Share Tech Mono',monospace">⚠ os dados do mês destino serão substituídos</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-p" onclick="confirmClone()"><i class="ti ti-copy"></i> duplicar</button>
+      <button class="btn btn-d" onclick="closeCloneModal()"><i class="ti ti-x"></i> cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="logo-box"><i class="ti ti-home-heart" style="color:var(--c1);font-size:19px"></i></div>
+    <div>
+      <div class="logo-name">JUJU'S HOUSE</div>
+      <div class="logo-sub">financial_system // v3.0</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <div class="save-chip"><div class="sdot" id="save-dot"></div><span id="save-label">salvo</span></div>
+    <button class="btn-reset" onclick="clearAll()"><i class="ti ti-trash"></i> limpar</button>
+  </div>
+</div>
+
+<!-- MONTH TABS -->
+<div class="month-bar"><div class="month-tabs" id="month-tabs"></div></div>
+<div class="info-bar">
+  <div style="display:flex;align-items:center;gap:8px"><i class="ti ti-terminal"></i><span id="month-label-text">—</span><span style="opacity:.35">// clique nos campos para editar · passe o mouse no mês para duplicar</span></div>
+  <div style="opacity:.4">local_storage :: active</div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <div class="ntab active" onclick="switchSection('resumo',this)"><i class="ti ti-layout-dashboard"></i> Resumo</div>
+  <div class="ntab" onclick="switchSection('gastos',this)"><i class="ti ti-receipt"></i> Gastos</div>
+  <div class="ntab" onclick="switchSection('cartao20',this)"><i class="ti ti-credit-card"></i> Cartão dia 20</div>
+  <div class="ntab" onclick="switchSection('cartao10',this)"><i class="ti ti-credit-card"></i> Cartão dia 10</div>
+  <div class="ntab" onclick="switchSection('ganhos',this)"><i class="ti ti-trending-up"></i> Ganhos</div>
+  <div class="ntab" onclick="switchSection('metas',this)"><i class="ti ti-target"></i> Metas</div>
+  <div class="ntab red" onclick="switchSection('atrasadas',this)"><i class="ti ti-alert-triangle"></i> Atrasadas</div>
+</div>
+
+<!-- RESUMO -->
+<div id="tab-resumo" class="content active">
+  <div class="sec-title"><i class="ti ti-chart-pie"></i> status financeiro do mês</div>
+  <div class="cards-row">
+    <div class="cy-card"><div class="top-line lg"></div><div class="card-ico"><i class="ti ti-arrow-up"></i></div><div class="card-lbl">total ganhos</div><div class="card-val cvg" id="sum-income">R$ 0,00</div><div class="card-sub">receitas do mês</div></div>
+    <div class="cy-card"><div class="top-line l3"></div><div class="card-ico"><i class="ti ti-arrow-down"></i></div><div class="card-lbl">total gastos</div><div class="card-val cvr" id="sum-expense">R$ 0,00</div><div class="card-sub">despesas do mês</div></div>
+    <div class="cy-card"><div class="top-line l2"></div><div class="card-ico"><i class="ti ti-wallet"></i></div><div class="card-lbl">saldo restante</div><div class="card-val cv2" id="sum-balance">R$ 0,00</div><div class="card-sub">disponível</div></div>
+    <div class="cy-card"><div class="top-line l1"></div><div class="card-ico"><i class="ti ti-credit-card"></i></div><div class="card-lbl">cartão dia 20</div><div class="card-val cv1" id="sum-card20">R$ 0,00</div><div class="card-sub">fatura atual</div></div>
+    <div class="cy-card"><div class="top-line l2"></div><div class="card-ico"><i class="ti ti-credit-card"></i></div><div class="card-lbl">cartão dia 10</div><div class="card-val cv2" id="sum-card10">R$ 0,00</div><div class="card-sub">fatura atual</div></div>
+    <div class="cy-card"><div class="top-line l3"></div><div class="card-ico"><i class="ti ti-alert-circle"></i></div><div class="card-lbl">contas atrasadas</div><div class="card-val cvr" id="sum-overdue">R$ 0,00</div><div class="card-sub" id="sum-overdue-count">nenhuma em atraso</div></div>
+  </div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"><i class="ti ti-chart-donut"></i> gastos por categoria</div>
+      <div class="donut-wrap"><div class="chart-container" style="height:165px"><canvas id="catChart"></canvas></div><div class="donut-center"><div class="donut-center-val" id="donutVal">—</div><div class="donut-center-label">total</div></div></div>
+      <div class="legend-row" id="cat-legend"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><i class="ti ti-scale"></i> ganhos × despesas</div>
+      <div class="chart-container" style="height:165px"><canvas id="balanceChart"></canvas></div>
+    </div>
+  </div>
+  <div class="panel" style="margin-bottom:18px">
+    <div class="panel-title"><i class="ti ti-activity"></i> últimas movimentações</div>
+    <div style="overflow-x:auto"><table class="dt"><thead><tr><th>data</th><th>descrição</th><th>categoria</th><th>pagamento</th><th>tipo</th><th style="text-align:right">valor</th></tr></thead><tbody id="recent-body"><tr><td colspan="6" class="empty-state">nenhuma movimentação ainda</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- GASTOS -->
+<div id="tab-gastos" class="content">
+  <div class="add-form">
+    <div class="form-title"><i class="ti ti-plus-circle"></i> adicionar gasto</div>
+    <div class="form-grid" style="grid-template-columns:100px 115px 1fr 125px 105px 85px 75px 1fr">
+      <input type="date" id="g-date">
+      <select id="g-cat"><option value="">Categoria</option><option>Alimentação</option><option>Mercado</option><option>Transporte</option><option>Saúde</option><option>Casa</option><option>Lazer</option><option>Assinaturas</option><option>Estudos</option><option>Pets</option><option>Outros</option></select>
+      <input type="text" id="g-desc" placeholder="descrição...">
+      <select id="g-pay"><option value="">Pagamento</option><option>Pix</option><option>Débito</option><option>Cartão D20</option><option>Cartão D10</option><option>Dinheiro</option><option>Transferência</option></select>
+      <input type="number" id="g-val" placeholder="R$ 0,00" step="0.01" min="0">
+      <select id="g-type"><option value="Necessidade">Necessidade</option><option value="Supérfluo">Supérfluo</option></select>
+      <select id="g-parc"><option value="À vista">À vista</option><option>2x</option><option>3x</option><option>4x</option><option>5x</option><option>6x</option><option>7x</option><option>8x</option><option>9x</option><option>10x</option><option>11x</option><option>12x</option><option>15x</option><option>18x</option><option>24x</option><option>30x</option><option>36x</option></select>
+      <input type="text" id="g-obs" placeholder="observações...">
+    </div>
+    <button class="btn btn-p btn-sm" onclick="addExpense()"><i class="ti ti-plus"></i> adicionar</button>
+  </div>
+  <div class="panel">
+    <div class="panel-title" style="justify-content:space-between"><span><i class="ti ti-list"></i> lista de gastos <small style="font-size:9px;font-weight:400;opacity:.4;letter-spacing:0">— clique para editar</small></span><span id="expense-total-badge" style="font-size:11px;color:var(--c1)"></span></div>
+    <div style="overflow-x:auto"><table class="dt" style="min-width:720px"><thead><tr><th>data</th><th>categoria</th><th>descrição</th><th>pagamento</th><th>parcelas</th><th style="text-align:right">valor</th><th>tipo</th><th>obs</th><th></th></tr></thead><tbody id="expense-body"><tr><td colspan="9" class="empty-state">nenhum gasto ainda</td></tr></tbody></table></div>
+    <div class="total-row"><span class="total-lbl">total do mês</span><span class="total-val cvr" id="expense-total">R$ 0,00</span></div>
+  </div>
+</div>
+
+<!-- CARTÃO 20 -->
+<div id="tab-cartao20" class="content">
+  <div style="border:1px solid var(--b1);border-radius:8px;padding:10px 18px;display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;background:var(--c1a);animation:glow1 3s ease-in-out infinite"><i class="ti ti-credit-card" style="color:var(--c1)"></i><span style="font-size:13px;font-weight:700;color:var(--c1);letter-spacing:2px">Cartão — fechamento dia 20</span></div>
+  <div class="add-form">
+    <div class="form-title"><i class="ti ti-settings"></i> configurar cartão</div>
+    <div class="form-grid" style="grid-template-columns:1fr 1fr"><input type="text" id="c20-name" placeholder="nome do cartão..."><input type="number" id="c20-limit" placeholder="limite R$" step="0.01"></div>
+    <div class="form-title"><i class="ti ti-plus"></i> lançar compra</div>
+    <div class="form-grid" style="grid-template-columns:95px 1fr 115px 105px 65px 65px 105px">
+      <input type="date" id="c20-date"><input type="text" id="c20-desc" placeholder="descrição...">
+      <select id="c20-cat"><option value="">Categoria</option><option>Alimentação</option><option>Mercado</option><option>Transporte</option><option>Saúde</option><option>Casa</option><option>Lazer</option><option>Assinaturas</option><option>Estudos</option><option>Pets</option><option>Outros</option></select>
+      <input type="number" id="c20-total" placeholder="total R$" step="0.01">
+      <input type="number" id="c20-cur" placeholder="parc." min="1"><input type="number" id="c20-tot" placeholder="de X" min="1">
+      <input type="number" id="c20-val" placeholder="valor parc." step="0.01">
+    </div>
+    <div style="margin-top:10px"><button class="btn btn-p btn-sm" onclick="addCard(20)"><i class="ti ti-plus"></i> adicionar</button></div>
+  </div>
+  <div class="three-col">
+    <div class="panel">
+      <div class="panel-title"><i class="ti ti-credit-card"></i> lançamentos — dia 20 <small style="font-size:9px;opacity:.4;font-weight:400;letter-spacing:0">— clique para editar</small></div>
+      <div style="overflow-x:auto"><table class="dt"><thead><tr><th>data</th><th>descrição</th><th>categoria</th><th>parcela</th><th style="text-align:right">valor</th><th></th></tr></thead><tbody id="card20-body"><tr><td colspan="6" class="empty-state">nenhum lançamento</td></tr></tbody></table></div>
+      <div class="total-row"><span class="total-lbl">fatura total</span><span class="total-val cv1" id="card20-total">R$ 0,00</span></div>
+    </div>
+    <div>
+      <div class="panel" style="margin-bottom:12px">
+        <div class="panel-title"><i class="ti ti-gauge"></i> limite utilizado</div>
+        <div id="c20-info-name" style="font-size:13px;font-weight:700;color:var(--c1);margin-bottom:4px;letter-spacing:1px">—</div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-bottom:4px;letter-spacing:.5px"><span>utilizado</span><span id="c20-pct">0%</span></div>
+        <div class="lim-wrap"><div class="lim1" id="c20-bar" style="width:0%"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:12px">
+          <div><div style="color:var(--text3);font-size:9px">gasto</div><div style="font-weight:700;color:var(--c1)" id="c20-used">R$ 0,00</div></div>
+          <div style="text-align:right"><div style="color:var(--text3);font-size:9px">restante</div><div style="font-weight:700;color:var(--green)" id="c20-remain">—</div></div>
+        </div>
+      </div>
+      <div class="panel"><div class="panel-title"><i class="ti ti-chart-donut-2"></i> por categoria</div><div class="chart-sm"><canvas id="card20CatChart"></canvas></div><div class="legend-row" id="card20-legend"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CARTÃO 10 -->
+<div id="tab-cartao10" class="content">
+  <div style="border:1px solid var(--b2);border-radius:8px;padding:10px 18px;display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;background:var(--c2a);animation:glow2 3s ease-in-out infinite"><i class="ti ti-credit-card" style="color:var(--c2)"></i><span style="font-size:13px;font-weight:700;color:var(--c2);letter-spacing:2px">Cartão — fechamento dia 10</span></div>
+  <div class="add-form add-form-p2">
+    <div class="form-title ft2"><i class="ti ti-settings"></i> configurar cartão</div>
+    <div class="form-grid" style="grid-template-columns:1fr 1fr"><input type="text" id="c10-name" placeholder="nome do cartão..."><input type="number" id="c10-limit" placeholder="limite R$" step="0.01"></div>
+    <div class="form-title ft2"><i class="ti ti-plus"></i> lançar compra</div>
+    <div class="form-grid" style="grid-template-columns:95px 1fr 115px 105px 65px 65px 105px">
+      <input type="date" id="c10-date"><input type="text" id="c10-desc" placeholder="descrição...">
+      <select id="c10-cat"><option value="">Categoria</option><option>Alimentação</option><option>Mercado</option><option>Transporte</option><option>Saúde</option><option>Casa</option><option>Lazer</option><option>Assinaturas</option><option>Estudos</option><option>Pets</option><option>Outros</option></select>
+      <input type="number" id="c10-total" placeholder="total R$" step="0.01">
+      <input type="number" id="c10-cur" placeholder="parc." min="1"><input type="number" id="c10-tot" placeholder="de X" min="1">
+      <input type="number" id="c10-val" placeholder="valor parc." step="0.01">
+    </div>
+    <div style="margin-top:10px"><button class="btn btn-p btn-sm" style="color:var(--c2);border-color:var(--b2)" onclick="addCard(10)"><i class="ti ti-plus"></i> adicionar</button></div>
+  </div>
+  <div class="three-col">
+    <div class="panel" style="border-color:var(--b2)">
+      <div class="panel-title pt2"><i class="ti ti-credit-card"></i> lançamentos — dia 10 <small style="font-size:9px;opacity:.4;font-weight:400;letter-spacing:0">— clique para editar</small></div>
+      <div style="overflow-x:auto"><table class="dt"><thead><tr><th>data</th><th>descrição</th><th>categoria</th><th>parcela</th><th style="text-align:right">valor</th><th></th></tr></thead><tbody id="card10-body"><tr><td colspan="6" class="empty-state">nenhum lançamento</td></tr></tbody></table></div>
+      <div class="total-row t2"><span class="total-lbl">fatura total</span><span class="total-val cv2" id="card10-total">R$ 0,00</span></div>
+    </div>
+    <div>
+      <div class="panel" style="margin-bottom:12px;border-color:var(--b2)">
+        <div class="panel-title pt2"><i class="ti ti-gauge"></i> limite utilizado</div>
+        <div id="c10-info-name" style="font-size:13px;font-weight:700;color:var(--c2);margin-bottom:4px;letter-spacing:1px">—</div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-bottom:4px"><span>utilizado</span><span id="c10-pct">0%</span></div>
+        <div class="lim-wrap" style="border-color:var(--b2)"><div class="lim2" id="c10-bar" style="width:0%"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:12px">
+          <div><div style="color:var(--text3);font-size:9px">gasto</div><div style="font-weight:700;color:var(--c2)" id="c10-used">R$ 0,00</div></div>
+          <div style="text-align:right"><div style="color:var(--text3);font-size:9px">restante</div><div style="font-weight:700;color:var(--green)" id="c10-remain">—</div></div>
+        </div>
+      </div>
+      <div class="panel" style="border-color:var(--b2)"><div class="panel-title pt2"><i class="ti ti-chart-donut-2"></i> por categoria</div><div class="chart-sm"><canvas id="card10CatChart"></canvas></div><div class="legend-row" id="card10-legend"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- GANHOS -->
+<div id="tab-ganhos" class="content">
+  <div class="add-form">
+    <div class="form-title"><i class="ti ti-plus-circle"></i> adicionar ganho</div>
+    <div class="form-grid" style="grid-template-columns:130px 1fr 115px 105px">
+      <select id="i-source"><option value="">Tipo</option><option>Salário</option><option>Freelance</option><option>Comissão</option><option>Renda extra</option><option>Investimentos</option><option>Outros</option></select>
+      <input type="text" id="i-desc" placeholder="descrição...">
+      <input type="number" id="i-val" placeholder="R$ 0,00" step="0.01" min="0">
+      <input type="date" id="i-date">
+    </div>
+    <button class="btn btn-p btn-sm" onclick="addIncome()"><i class="ti ti-plus"></i> adicionar</button>
+  </div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"><i class="ti ti-list"></i> receitas do mês <small style="font-size:9px;opacity:.4;font-weight:400;letter-spacing:0">— clique para editar</small></div>
+      <table class="dt"><thead><tr><th>data</th><th>tipo</th><th>descrição</th><th style="text-align:right">valor</th><th></th></tr></thead><tbody id="income-body"><tr><td colspan="5" class="empty-state">nenhum ganho ainda</td></tr></tbody></table>
+      <div class="total-row"><span class="total-lbl">total de ganhos</span><span class="total-val cvg" id="income-total">R$ 0,00</span></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><i class="ti ti-chart-bar"></i> por fonte de renda</div>
+      <div class="chart-container"><canvas id="incomeChart"></canvas></div>
+      <div id="income-sources" style="margin-top:10px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- METAS -->
+<div id="tab-metas" class="content">
+  <div class="add-form">
+    <div class="form-title"><i class="ti ti-target"></i> nova meta</div>
+    <div class="form-grid" style="grid-template-columns:1fr 120px 120px 120px">
+      <input type="text" id="m-name" placeholder="nome da meta...">
+      <input type="number" id="m-goal" placeholder="objetivo R$" step="0.01">
+      <input type="number" id="m-saved" placeholder="já guardei R$" step="0.01">
+      <input type="number" id="m-monthly" placeholder="R$/mês" step="0.01">
+    </div>
+    <button class="btn btn-p btn-sm" onclick="addGoal()"><i class="ti ti-plus"></i> adicionar</button>
+  </div>
+  <div class="sec-title"><i class="ti ti-stars"></i> metas ativas <small style="font-size:9px;font-weight:400;letter-spacing:0;text-transform:none;opacity:.5">— clique nos valores para editar</small></div>
+  <div id="goals-container"><div class="empty-state" style="background:var(--card);border-radius:8px;border:1px solid var(--b2)">nenhuma meta ainda</div></div>
+  <div class="panel" style="margin-top:14px"><div class="panel-title"><i class="ti ti-chart-bar"></i> progresso das metas</div><div class="chart-container"><canvas id="goalChart"></canvas></div></div>
+</div>
+
+<!-- ATRASADAS -->
+<div id="tab-atrasadas" class="content">
+  <div id="overdue-alert" class="ov-alert" style="display:none">
+    <div><div class="ov-lbl">em atraso</div><div class="ov-num" id="ov-count">0</div></div>
+    <div style="text-align:center"><div class="ov-lbl">total em atraso</div><div class="ov-num" id="ov-total">R$ 0</div></div>
+    <div style="text-align:right"><div class="ov-lbl">juros est.</div><div class="ov-num" id="ov-juros">R$ 0</div></div>
+  </div>
+  <div class="add-form add-form-red">
+    <div class="form-title ft3"><i class="ti ti-alert-triangle"></i> registrar conta atrasada</div>
+    <div class="form-grid" style="grid-template-columns:100px 1fr 120px 105px 85px 105px 1fr">
+      <input type="date" id="ov-date">
+      <input type="text" id="ov-desc" placeholder="descrição...">
+      <select id="ov-cat"><option value="">Categoria</option><option>Aluguel</option><option>Energia</option><option>Água</option><option>Internet</option><option>Telefone</option><option>Cartão</option><option>Empréstimo</option><option>Escola</option><option>Saúde</option><option>Outros</option></select>
+      <input type="number" id="ov-val" placeholder="valor R$" step="0.01" min="0">
+      <input type="number" id="ov-dias" placeholder="dias" min="1">
+      <select id="ov-status"><option value="Em atraso">Em atraso</option><option value="Negociando">Negociando</option><option value="Parcelado">Parcelado</option></select>
+      <input type="text" id="ov-obs" placeholder="obs...">
+    </div>
+    <button class="btn btn-sm" style="background:var(--c3a);color:var(--c3);border:1px solid var(--b3);margin-top:10px" onclick="addOverdue()"><i class="ti ti-plus"></i> registrar</button>
+  </div>
+  <div class="panel" style="border-color:var(--b3)">
+    <div class="panel-title pt3" style="justify-content:space-between"><span><i class="ti ti-alert-circle"></i> contas atrasadas <small style="font-size:9px;opacity:.4;font-weight:400;letter-spacing:0">— clique para editar</small></span><span id="ov-badge" style="font-size:11px;color:var(--c3)"></span></div>
+    <div style="overflow-x:auto"><table class="dt" style="min-width:700px"><thead><tr><th>vencimento</th><th>descrição</th><th>categoria</th><th>dias</th><th style="text-align:right">valor</th><th>juros 2%</th><th>status</th><th>obs</th><th></th></tr></thead><tbody id="overdue-body"><tr><td colspan="9" class="empty-state">nenhuma conta atrasada</td></tr></tbody></table></div>
+    <div class="total-row t3"><span class="total-lbl">total em atraso</span><span class="total-val cvr" id="overdue-total">R$ 0,00</span></div>
+  </div>
+  <div class="two-col" style="margin-top:14px">
+    <div class="panel" style="border-color:var(--b3)">
+      <div class="panel-title pt3"><i class="ti ti-chart-donut"></i> por categoria</div>
+      <div class="donut-wrap"><div class="chart-container" style="height:155px"><canvas id="overdueChart"></canvas></div><div class="donut-center"><div class="donut-center-val" style="color:var(--c3)" id="ov-donut-val">—</div><div class="donut-center-label">total</div></div></div>
+      <div class="legend-row" id="ov-legend"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title" style="color:var(--gold)"><i class="ti ti-info-circle"></i> dicas para regularizar</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.9">
+        <div style="padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><i class="ti ti-circle-check" style="color:var(--green);margin-right:6px"></i>Priorize dívidas com maiores juros</div>
+        <div style="padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><i class="ti ti-circle-check" style="color:var(--green);margin-right:6px"></i>Negocie parcelamento com o credor</div>
+        <div style="padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><i class="ti ti-circle-check" style="color:var(--green);margin-right:6px"></i>Evite novos parcelamentos enquanto há atraso</div>
+        <div style="padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><i class="ti ti-circle-check" style="color:var(--green);margin-right:6px"></i>Reserve % do salário para quitar dívidas</div>
+        <div style="padding:7px 0"><i class="ti ti-circle-check" style="color:var(--green);margin-right:6px"></i>Use o Serasa para negociar com desconto</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+// PARTICLES
+(function(){
+  const wrap=document.getElementById('particles');
+  const colors=['#38BDF8','#A78BFA','#F472B6','#34D399'];
+  for(let i=0;i<30;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    const c=colors[Math.floor(Math.random()*colors.length)];
+    p.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;background:${c};width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;animation-duration:${Math.random()*15+8}s;animation-delay:${Math.random()*8}s;opacity:${Math.random()*.6+.2}`;
+    wrap.appendChild(p);
+  }
+})();
+
+const MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const COLORS=['#38BDF8','#A78BFA','#F472B6','#34D399','#FBBF24','#F87171','#60A5FA','#C084FC','#FB923C','#4ADE80'];
+const RCOLORS=['#F472B6','#F87171','#FBBF24','#A78BFA','#38BDF8','#34D399'];
+const SK='jujus_house_cyber_v3';
+
+let store;
+try{const r=localStorage.getItem(SK);store=r?JSON.parse(r):null;}catch(e){store=null;}
+if(!store){store={};for(let m=0;m<12;m++)store[m]={expenses:[],incomes:[],cards20:[],cards10:[],overdues:[],goals:[]};}
+for(let m=0;m<12;m++){if(!store[m])store[m]={};const s=store[m];['expenses','incomes','cards20','cards10','overdues','goals'].forEach(k=>{if(!s[k])s[k]=[];});}
+
+let curMonth=new Date().getMonth();
+let charts={};
+let saveTimer=null;
+let cloneFromMonth=null;
+
+function D(){return store[curMonth];}
+function fmt(v){return'R$ '+parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function today(){return new Date().toISOString().split('T')[0];}
+function hasData(m){const d=store[m];return['expenses','incomes','cards20','cards10','overdues','goals'].some(k=>d[k]&&d[k].length);}
+function deepClone(obj){return JSON.parse(JSON.stringify(obj));}
+
+function save(){
+  const dot=document.getElementById('save-dot'),lbl=document.getElementById('save-label');
+  dot.className='sdot saving';lbl.textContent='salvando...';
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{
+    try{localStorage.setItem(SK,JSON.stringify(store));}catch(e){}
+    dot.className='sdot';lbl.textContent='salvo';
+  },500);
+}
+
+function clearAll(){
+  if(!confirm('Apagar TODOS os dados de todos os meses?'))return;
+  for(let m=0;m<12;m++)store[m]={expenses:[],incomes:[],cards20:[],cards10:[],overdues:[],goals:[]};
+  try{localStorage.removeItem(SK);}catch(e){}
+  renderAll();refreshCharts();buildMonthTabs();
+}
+
+// CLONE MONTH
+function openCloneModal(fromMonth,e){
+  e.stopPropagation();
+  cloneFromMonth=fromMonth;
+  document.getElementById('clone-from-name').textContent=MONTHS[fromMonth];
+  const sel=document.getElementById('clone-target');
+  sel.innerHTML='<option value="">selecione o mês destino...</option>';
+  MONTHS.forEach((name,i)=>{
+    if(i!==fromMonth){
+      const opt=document.createElement('option');
+      opt.value=i;opt.textContent=name+(hasData(i)?' (tem dados)':'');
+      sel.appendChild(opt);
+    }
+  });
+  document.getElementById('clone-modal').classList.add('open');
+}
+
+function closeCloneModal(){
+  document.getElementById('clone-modal').classList.remove('open');
+  cloneFromMonth=null;
+}
+
+function confirmClone(){
+  const target=parseInt(document.getElementById('clone-target').value);
+  if(isNaN(target)){alert('Selecione o mês destino!');return;}
+  if(!confirm(`Copiar dados de ${MONTHS[cloneFromMonth]} para ${MONTHS[target]}? Os dados de ${MONTHS[target]} serão substituídos.`))return;
+  store[target]=deepClone(store[cloneFromMonth]);
+  save();buildMonthTabs();closeCloneModal();
+  if(target===curMonth){renderAll();refreshCharts();}
+}
+
+function buildMonthTabs(){
+  const wrap=document.getElementById('month-tabs');
+  wrap.innerHTML='';
+  MONTHS.forEach((name,i)=>{
+    const tab=document.createElement('div');
+    tab.className='mtab'+(i===curMonth?' active':'');
+    const fromIdx=i;
+    tab.innerHTML=`${name}${hasData(i)?'<span class="dot"></span>':''}<span class="clone-btn" title="Duplicar este mês"><i class="ti ti-copy" style="font-size:9px"></i></span>`;
+    tab.querySelector('.clone-btn').addEventListener('click',e=>openCloneModal(fromIdx,e));
+    tab.onclick=(e)=>{if(!e.target.closest('.clone-btn'))selectMonth(i);};
+    wrap.appendChild(tab);
+  });
+}
+
+function selectMonth(m){
+  curMonth=m;buildMonthTabs();
+  document.getElementById('month-label-text').textContent=MONTHS[m]+' // '+new Date().getFullYear();
+  renderAll();setTimeout(()=>refreshCharts(),80);
+}
+
+function switchSection(id,el){
+  document.querySelectorAll('.content').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+  setTimeout(()=>refreshCharts(),80);
+}
+
+function makeEditable(td,obj,field,type,cb){
+  td.classList.add('edit-cell');td.title='Clique para editar';
+  td.onclick=function(e){
+    e.stopPropagation();
+    if(td.querySelector('input'))return;
+    const inp=document.createElement('input');
+    inp.type=type==='number'?'number':'text';
+    if(type==='number')inp.step='0.01';
+    inp.value=obj[field];
+    inp.style='border:1px solid #38BDF8;border-radius:4px;padding:3px 7px;font-size:12px;width:100%;background:#181C30;color:#C8D8F0;font-family:Rajdhani,sans-serif;font-weight:500';
+    td.textContent='';td.appendChild(inp);inp.focus();inp.select();
+    function commit(){const val=type==='number'?parseFloat(inp.value)||0:inp.value;obj[field]=val;save();if(cb)cb();}
+    inp.onblur=commit;inp.onkeydown=ev=>{if(ev.key==='Enter')inp.blur();};
+  };
+}
+
+function addExpense(){
+  const d={date:document.getElementById('g-date').value||today(),cat:document.getElementById('g-cat').value,desc:document.getElementById('g-desc').value,pay:document.getElementById('g-pay').value,val:parseFloat(document.getElementById('g-val').value)||0,type:document.getElementById('g-type').value,parc:document.getElementById('g-parc').value,obs:document.getElementById('g-obs').value};
+  if(!d.desc||!d.val){alert('Preencha descrição e valor!');return;}
+  D().expenses.push(d);save();
+  ['g-desc','g-val','g-obs'].forEach(id=>document.getElementById(id).value='');
+  renderExpenses();updateSummary();refreshCharts();buildMonthTabs();
+}
+function removeExpense(i){D().expenses.splice(i,1);save();renderExpenses();updateSummary();refreshCharts();buildMonthTabs();}
+function renderExpenses(){
+  const tb=document.getElementById('expense-body'),data=D().expenses;
+  if(!data.length){tb.innerHTML='<tr><td colspan="9" class="empty-state">nenhum gasto ainda</td></tr>';document.getElementById('expense-total').textContent='R$ 0,00';document.getElementById('expense-total-badge').textContent='';return;}
+  const total=data.reduce((s,e)=>s+e.val,0);
+  tb.innerHTML='';
+  data.forEach((e,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${e.date}</td><td><span class="badge bd1">${e.cat||'—'}</span></td><td>${e.desc}</td><td><span class="badge ${e.pay&&e.pay.includes('D20')?'bd1':e.pay&&e.pay.includes('D10')?'bd2':'bdw'}">${e.pay||'—'}</span></td><td style="font-size:11px;color:var(--text3)">${e.parc}</td><td style="text-align:right;font-weight:700;color:var(--red)">${fmt(e.val)}</td><td><span class="badge ${e.type==='Necessidade'?'bdg':'bdr'}">${e.type}</span></td><td style="font-size:11px;color:var(--text3);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.obs||'—'}</td><td><button class="btn btn-d btn-sm" aria-label="Remover"><i class="ti ti-trash"></i></button></td>`;
+    tr.querySelector('button').onclick=()=>removeExpense(i);
+    const cells=tr.querySelectorAll('td');
+    makeEditable(cells[0],e,'date','text',()=>{renderExpenses();updateSummary();});
+    makeEditable(cells[2],e,'desc','text',()=>renderExpenses());
+    makeEditable(cells[5],e,'val','number',()=>{renderExpenses();updateSummary();refreshCharts();});
+    makeEditable(cells[7],e,'obs','text',()=>renderExpenses());
+    tb.appendChild(tr);
+  });
+  document.getElementById('expense-total').textContent=fmt(total);
+  document.getElementById('expense-total-badge').textContent='total: '+fmt(total);
+}
+
+function addCard(day){
+  const p='c'+day+'-';
+  const name=document.getElementById(p+'name').value,limit=parseFloat(document.getElementById(p+'limit').value)||0;
+  const totalV=parseFloat(document.getElementById(p+'total').value)||0;
+  const parcV=parseFloat(document.getElementById(p+'val').value)||totalV;
+  const desc=document.getElementById(p+'desc').value;
+  if(!desc||!parcV){alert('Preencha descrição e valor!');return;}
+  const d={date:document.getElementById(p+'date').value||today(),desc,cat:document.getElementById(p+'cat').value,total:totalV,cur:document.getElementById(p+'cur').value,tot:document.getElementById(p+'tot').value,val:parcV,name,limit};
+  (day===20?D().cards20:D().cards10).push(d);save();
+  [p+'desc',p+'total',p+'val',p+'cur',p+'tot'].forEach(id=>document.getElementById(id).value='');
+  renderCards(day);updateSummary();refreshCharts();buildMonthTabs();
+}
+function removeCard(day,i){(day===20?D().cards20:D().cards10).splice(i,1);save();renderCards(day);updateSummary();refreshCharts();buildMonthTabs();}
+function renderCards(day){
+  const cards=day===20?D().cards20:D().cards10,tb=document.getElementById('card'+day+'-body');
+  const total=cards.reduce((s,c)=>s+c.val,0);
+  const limit=cards.length?cards[cards.length-1].limit:0,name=cards.length?cards[cards.length-1].name:'—';
+  const color=day===20?'var(--c1)':'var(--c2)',bdg=day===20?'bd1':'bd2';
+  if(!cards.length)tb.innerHTML='<tr><td colspan="6" class="empty-state">nenhum lançamento</td></tr>';
+  else{
+    tb.innerHTML='';
+    cards.forEach((c,i)=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${c.date}</td><td>${c.desc}</td><td><span class="badge ${bdg}">${c.cat||'—'}</span></td><td style="font-size:11px;color:var(--text3)">${c.cur&&c.tot?c.cur+'x/'+c.tot+'x':'À vista'}</td><td style="text-align:right;font-weight:700;color:${color}">${fmt(c.val)}</td><td><button class="btn btn-d btn-sm" aria-label="Remover"><i class="ti ti-trash"></i></button></td>`;
+      tr.querySelector('button').onclick=()=>removeCard(day,i);
+      const cells=tr.querySelectorAll('td');
+      makeEditable(cells[0],c,'date','text',()=>renderCards(day));
+      makeEditable(cells[1],c,'desc','text',()=>renderCards(day));
+      makeEditable(cells[4],c,'val','number',()=>{renderCards(day);updateSummary();refreshCharts();});
+      tb.appendChild(tr);
+    });
+  }
+  document.getElementById('card'+day+'-total').textContent=fmt(total);
+  document.getElementById('c'+day+'-info-name').textContent=name||'—';
+  const pct=limit?Math.min(100,Math.round(total/limit*100)):0;
+  document.getElementById('c'+day+'-pct').textContent=pct+'%';
+  document.getElementById('c'+day+'-bar').style.width=pct+'%';
+  document.getElementById('c'+day+'-used').textContent=fmt(total);
+  document.getElementById('c'+day+'-remain').textContent=limit?fmt(limit-total):'—';
+}
+
+function addIncome(){
+  const d={date:document.getElementById('i-date').value||today(),source:document.getElementById('i-source').value,desc:document.getElementById('i-desc').value,val:parseFloat(document.getElementById('i-val').value)||0};
+  if(!d.desc||!d.val){alert('Preencha descrição e valor!');return;}
+  D().incomes.push(d);save();
+  ['i-desc','i-val'].forEach(id=>document.getElementById(id).value='');
+  renderIncomes();updateSummary();refreshCharts();buildMonthTabs();
+}
+function removeIncome(i){D().incomes.splice(i,1);save();renderIncomes();updateSummary();refreshCharts();buildMonthTabs();}
+function renderIncomes(){
+  const tb=document.getElementById('income-body'),data=D().incomes;
+  const total=data.reduce((s,i)=>s+i.val,0);
+  if(!data.length)tb.innerHTML='<tr><td colspan="5" class="empty-state">nenhum ganho ainda</td></tr>';
+  else{
+    tb.innerHTML='';
+    data.forEach((inc,i)=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${inc.date}</td><td><span class="badge bdg">${inc.source||'—'}</span></td><td>${inc.desc}</td><td style="text-align:right;font-weight:700;color:var(--green)">${fmt(inc.val)}</td><td><button class="btn btn-d btn-sm" aria-label="Remover"><i class="ti ti-trash"></i></button></td>`;
+      tr.querySelector('button').onclick=()=>removeIncome(i);
+      const cells=tr.querySelectorAll('td');
+      makeEditable(cells[0],inc,'date','text',()=>renderIncomes());
+      makeEditable(cells[2],inc,'desc','text',()=>renderIncomes());
+      makeEditable(cells[3],inc,'val','number',()=>{renderIncomes();updateSummary();refreshCharts();});
+      tb.appendChild(tr);
+    });
+  }
+  document.getElementById('income-total').textContent=fmt(total);
+  const sources={};data.forEach(i=>{const s=i.source||'Outros';sources[s]=(sources[s]||0)+i.val;});
+  document.getElementById('income-sources').innerHTML=Object.entries(sources).map(([k,v])=>`<div class="income-row"><span style="font-size:12px;color:var(--text2)">${k}</span><span style="font-size:12px;font-weight:700;color:var(--green)">${fmt(v)}</span></div>`).join('');
+}
+
+function addGoal(){
+  const g={name:document.getElementById('m-name').value,goal:parseFloat(document.getElementById('m-goal').value)||0,saved:parseFloat(document.getElementById('m-saved').value)||0,monthly:parseFloat(document.getElementById('m-monthly').value)||0};
+  if(!g.name||!g.goal){alert('Preencha nome e objetivo!');return;}
+  D().goals.push(g);save();
+  ['m-name','m-goal','m-saved','m-monthly'].forEach(id=>document.getElementById(id).value='');
+  renderGoals();refreshCharts();buildMonthTabs();
+}
+function removeGoal(i){D().goals.splice(i,1);save();renderGoals();refreshCharts();buildMonthTabs();}
+function renderGoals(){
+  const c=document.getElementById('goals-container'),data=D().goals;
+  if(!data.length){c.innerHTML='<div class="empty-state" style="background:var(--card);border-radius:8px;border:1px solid var(--b2)">nenhuma meta ainda</div>';return;}
+  c.innerHTML='';
+  data.forEach((g,i)=>{
+    const pct=Math.min(100,g.goal?Math.round(g.saved/g.goal*100):0);
+    const remain=Math.max(0,g.goal-g.saved);
+    const months=g.monthly&&remain?Math.ceil(remain/g.monthly):null;
+    const barColor=pct>=80?'#34D399':pct>=50?'#38BDF8':'#A78BFA';
+    const div=document.createElement('div');div.className='goal-card';
+    div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:14px;font-weight:700;color:var(--text)"><i class="ti ti-star" style="color:var(--gold);font-size:13px"></i> ${g.name}</div><button class="btn btn-d btn-sm" aria-label="Remover"><i class="ti ti-trash"></i></button></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:5px;flex-wrap:wrap;gap:6px"><span>guardado: <strong class="g-saved edit-cell" style="color:var(--c2)">${fmt(g.saved)}</strong></span><span>objetivo: <strong class="g-goal edit-cell" style="color:var(--c1)">${fmt(g.goal)}</strong></span><span>faltam: <strong style="color:var(--text2)">${fmt(remain)}</strong></span>${months?`<span style="color:var(--c2)">~${months} ${months===1?'mês':'meses'}</span>`:''}</div><div class="prog-wrap"><div class="prog-fill" style="width:${pct}%;background:${barColor}"></div></div><div style="font-size:10px;color:var(--text3);margin-top:2px;font-family:'Share Tech Mono',monospace">${pct}% concluído</div>`;
+    div.querySelector('button').onclick=()=>removeGoal(i);
+    function makeGoalEdit(el,field){
+      el.onclick=function(){
+        const inp=document.createElement('input');inp.type='number';inp.step='0.01';inp.value=g[field];
+        inp.style='width:100px;font-size:12px;border:1px solid #38BDF8;border-radius:4px;padding:3px 6px;background:#181C30;color:#C8D8F0;font-family:Rajdhani,sans-serif';
+        el.textContent='';el.appendChild(inp);inp.focus();inp.select();
+        function commit(){g[field]=parseFloat(inp.value)||0;save();renderGoals();refreshCharts();}
+        inp.onblur=commit;inp.onkeydown=ev=>{if(ev.key==='Enter')inp.blur();};
+      };
+    }
+    makeGoalEdit(div.querySelector('.g-saved'),'saved');
+    makeGoalEdit(div.querySelector('.g-goal'),'goal');
+    c.appendChild(div);
+  });
+}
+
+function addOverdue(){
+  const d={date:document.getElementById('ov-date').value||today(),desc:document.getElementById('ov-desc').value,cat:document.getElementById('ov-cat').value,val:parseFloat(document.getElementById('ov-val').value)||0,dias:parseInt(document.getElementById('ov-dias').value)||0,status:document.getElementById('ov-status').value,obs:document.getElementById('ov-obs').value};
+  if(!d.desc||!d.val){alert('Preencha descrição e valor!');return;}
+  D().overdues.push(d);save();
+  ['ov-desc','ov-val','ov-dias','ov-obs'].forEach(id=>document.getElementById(id).value='');
+  renderOverdue();updateSummary();refreshCharts();buildMonthTabs();
+}
+function removeOverdue(i){D().overdues.splice(i,1);save();renderOverdue();updateSummary();refreshCharts();buildMonthTabs();}
+function markPaid(i){D().overdues[i].status='Pago';save();renderOverdue();updateSummary();refreshCharts();}
+function renderOverdue(){
+  const tb=document.getElementById('overdue-body'),data=D().overdues;
+  const ativos=data.filter(o=>o.status!=='Pago');
+  const total=ativos.reduce((s,o)=>s+o.val,0);
+  const juros=ativos.reduce((s,o)=>s+(o.val*0.02*Math.max(1,Math.floor(o.dias/30))),0);
+  if(!data.length)tb.innerHTML='<tr><td colspan="9" class="empty-state">nenhuma conta atrasada</td></tr>';
+  else{
+    tb.innerHTML='';
+    data.forEach((o,i)=>{
+      const tr=document.createElement('tr');
+      if(o.status==='Pago')tr.style.cssText='opacity:.4;text-decoration:line-through';
+      tr.innerHTML=`<td>${o.date}</td><td>${o.desc}</td><td><span class="badge bdw">${o.cat||'—'}</span></td><td><span style="font-weight:700;color:${o.dias>30?'var(--red)':o.dias>10?'var(--gold)':'var(--text)'}">${o.dias}d</span></td><td style="text-align:right;font-weight:700;color:var(--red)">${fmt(o.val)}</td><td style="text-align:right;font-size:11px;color:var(--gold)">${fmt(o.val*0.02*Math.max(1,Math.floor(o.dias/30)))}</td><td><span class="badge ${o.status==='Pago'?'bdg':o.status==='Negociando'?'bd2':'bdr'}">${o.status}</span></td><td style="font-size:11px;color:var(--text3);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.obs||'—'}</td><td style="display:flex;gap:3px">${o.status!=='Pago'?`<button class="btn btn-ok btn-sm" aria-label="Marcar pago"><i class="ti ti-check"></i></button>`:''}<button class="btn btn-d btn-sm" aria-label="Remover"><i class="ti ti-trash"></i></button></td>`;
+      const btns=tr.querySelectorAll('button');
+      if(o.status!=='Pago'){btns[0].onclick=()=>markPaid(i);btns[1].onclick=()=>removeOverdue(i);}
+      else btns[0].onclick=()=>removeOverdue(i);
+      const cells=tr.querySelectorAll('td');
+      makeEditable(cells[1],o,'desc','text',()=>renderOverdue());
+      makeEditable(cells[3],o,'dias','number',()=>{renderOverdue();updateSummary();refreshCharts();});
+      makeEditable(cells[4],o,'val','number',()=>{renderOverdue();updateSummary();refreshCharts();});
+      makeEditable(cells[7],o,'obs','text',()=>renderOverdue());
+      tb.appendChild(tr);
+    });
+  }
+  document.getElementById('overdue-total').textContent=fmt(total);
+  document.getElementById('ov-badge').textContent=ativos.length?ativos.length+' conta(s) — '+fmt(total):'';
+  const al=document.getElementById('overdue-alert');
+  if(ativos.length){al.style.display='flex';document.getElementById('ov-count').textContent=ativos.length;document.getElementById('ov-total').textContent=fmt(total);document.getElementById('ov-juros').textContent=fmt(juros);}
+  else al.style.display='none';
+}
+
+function updateSummary(){
+  const d=D();
+  const ti=d.incomes.reduce((s,i)=>s+i.val,0),te=d.expenses.reduce((s,e)=>s+e.val,0);
+  const t20=d.cards20.reduce((s,c)=>s+c.val,0),t10=d.cards10.reduce((s,c)=>s+c.val,0);
+  const tov=d.overdues.filter(o=>o.status!=='Pago').reduce((s,o)=>s+o.val,0);
+  const ovC=d.overdues.filter(o=>o.status!=='Pago').length;
+  const bal=ti-te;
+  document.getElementById('sum-income').textContent=fmt(ti);
+  document.getElementById('sum-expense').textContent=fmt(te);
+  const bEl=document.getElementById('sum-balance');
+  bEl.textContent=fmt(bal);bEl.className='card-val '+(bal>=0?'cvg':'cvr');
+  document.getElementById('sum-card20').textContent=fmt(t20);
+  document.getElementById('sum-card10').textContent=fmt(t10);
+  document.getElementById('sum-overdue').textContent=fmt(tov);
+  document.getElementById('sum-overdue-count').textContent=ovC?ovC+' conta(s) em atraso':'nenhuma em atraso';
+  renderRecent();
+}
+
+function renderRecent(){
+  const d=D();
+  const all=[...d.expenses.map(e=>({...e,kind:'gasto'})),...d.incomes.map(i=>({...i,kind:'ganho',cat:'Receita',pay:'—'}))].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
+  const tb=document.getElementById('recent-body');
+  if(!all.length){tb.innerHTML='<tr><td colspan="6" class="empty-state">nenhuma movimentação ainda</td></tr>';return;}
+  tb.innerHTML=all.map(r=>`<tr><td>${r.date}</td><td>${r.desc}</td><td><span class="badge bd1">${r.cat||r.source||'—'}</span></td><td>${r.pay||r.source||'—'}</td><td><span class="badge ${r.kind==='ganho'?'bdg':'bdr'}">${r.kind}</span></td><td style="text-align:right;font-weight:700;color:${r.kind==='ganho'?'var(--green)':'var(--red)'}">${r.kind==='ganho'?'+':'-'}${fmt(r.val)}</td></tr>`).join('');
+}
+
+function renderAll(){renderExpenses();renderCards(20);renderCards(10);renderIncomes();renderGoals();renderOverdue();updateSummary();}
+
+function destroyCharts(){Object.values(charts).forEach(c=>{if(c)c.destroy();});charts={};}
+
+function refreshCharts(){
+  destroyCharts();
+  const d=D();
+  const ticks={color:'#7A90B8',font:{size:10}};
+  const grid={color:'rgba(255,255,255,0.05)'};
+
+  const cats={};d.expenses.forEach(e=>{const c=e.cat||'Outros';cats[c]=(cats[c]||0)+e.val;});
+  const cl=Object.keys(cats),cd=Object.values(cats),ct=cd.reduce((s,v)=>s+v,0);
+  document.getElementById('donutVal').textContent=ct?fmt(ct):'—';
+  document.getElementById('cat-legend').innerHTML=cl.map((l,i)=>`<span><span class="ldot" style="background:${COLORS[i%COLORS.length]}"></span>${l}: ${fmt(cd[i])}</span>`).join('');
+  if(cl.length)charts.cat=new Chart(document.getElementById('catChart'),{type:'doughnut',data:{labels:cl,datasets:[{data:cd,backgroundColor:COLORS.slice(0,cl.length),borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.label+': '+fmt(ctx.raw)}}}}});
+
+  const ti=d.incomes.reduce((s,i)=>s+i.val,0),te=d.expenses.reduce((s,e)=>s+e.val,0);
+  charts.bal=new Chart(document.getElementById('balanceChart'),{type:'bar',data:{labels:['Ganhos','Despesas'],datasets:[{data:[ti,te],backgroundColor:['rgba(52,211,153,0.6)','rgba(248,113,113,0.6)'],borderColor:['#34D399','#F87171'],borderWidth:1,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmt(ctx.raw)}}},scales:{x:{grid:{display:false},ticks},y:{grid,ticks:{...ticks,callback:v=>'R$'+v.toLocaleString('pt-BR')}}}}});
+
+  [20,10].forEach(day=>{
+    const cards=day===20?d.cards20:d.cards10,id='card'+day+'CatChart',lid='card'+day+'-legend';
+    const cc={};cards.forEach(c=>{const cat=c.cat||'Outros';cc[cat]=(cc[cat]||0)+c.val;});
+    const ll=Object.keys(cc),dd=Object.values(cc);
+    document.getElementById(lid).innerHTML=ll.map((l,i)=>`<span><span class="ldot" style="background:${COLORS[i%COLORS.length]}"></span>${l}</span>`).join('');
+    if(ll.length){const ch=new Chart(document.getElementById(id),{type:'doughnut',data:{labels:ll,datasets:[{data:dd,backgroundColor:COLORS.slice(0,ll.length),borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.label+': '+fmt(ctx.raw)}}}}});if(day===20)charts.c20=ch;else charts.c10=ch;}
+  });
+
+  const src={};d.incomes.forEach(i=>{const s=i.source||'Outros';src[s]=(src[s]||0)+i.val;});
+  const sl=Object.keys(src),sd=Object.values(src);
+  if(sl.length)charts.inc=new Chart(document.getElementById('incomeChart'),{type:'bar',data:{labels:sl,datasets:[{data:sd,backgroundColor:COLORS.map(c=>c+'99'),borderColor:COLORS,borderWidth:1,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmt(ctx.raw)}}},scales:{x:{grid:{display:false},ticks},y:{grid,ticks:{...ticks,callback:v=>'R$'+v.toLocaleString('pt-BR')}}}}});
+
+  if(d.goals.length)charts.goal=new Chart(document.getElementById('goalChart'),{type:'bar',data:{labels:d.goals.map(g=>g.name),datasets:[{label:'Guardado',data:d.goals.map(g=>g.saved),backgroundColor:'rgba(56,189,248,0.6)',borderColor:'#38BDF8',borderWidth:1,borderRadius:{topLeft:0,topRight:0,bottomLeft:6,bottomRight:6}},{label:'Restante',data:d.goals.map(g=>Math.max(0,g.goal-g.saved)),backgroundColor:'rgba(167,139,250,0.2)',borderColor:'rgba(167,139,250,0.4)',borderWidth:1,borderRadius:{topLeft:6,topRight:6,bottomLeft:0,bottomRight:0}}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},scales:{x:{stacked:true,grid:{display:false},ticks},y:{stacked:true,grid,ticks:{...ticks,callback:v=>'R$'+v.toLocaleString('pt-BR')}}}}});
+
+  const oa=d.overdues.filter(o=>o.status!=='Pago'),oc={};
+  oa.forEach(o=>{const c=o.cat||'Outros';oc[c]=(oc[c]||0)+o.val;});
+  const ol=Object.keys(oc),odd=Object.values(oc),ot=odd.reduce((s,v)=>s+v,0);
+  document.getElementById('ov-donut-val').textContent=ot?fmt(ot):'—';
+  document.getElementById('ov-legend').innerHTML=ol.map((l,i)=>`<span><span class="ldot" style="background:${RCOLORS[i%RCOLORS.length]}"></span>${l}: ${fmt(odd[i])}</span>`).join('');
+  if(ol.length)charts.ov=new Chart(document.getElementById('overdueChart'),{type:'doughnut',data:{labels:ol,datasets:[{data:odd,backgroundColor:RCOLORS.slice(0,ol.length),borderWidth:0,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.label+': '+fmt(ctx.raw)}}}}});
+}
+
+buildMonthTabs();
+selectMonth(curMonth);
+</script>
+</body>
+</html>
